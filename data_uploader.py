@@ -1,6 +1,8 @@
+import io
 from urllib.parse import urljoin
 
 import requests
+from PIL import Image
 from bs4 import BeautifulSoup
 
 
@@ -13,6 +15,7 @@ class DataUploader(object):
     base_url = "https://www.proveyourworth.net"
     test_url = urljoin(base_url, 'level3/')
     name_activation_url = urljoin(test_url, 'activate/')
+    payload_image_url = urljoin(test_url, 'payload/')
 
 
     def __init__(self):
@@ -21,6 +24,9 @@ class DataUploader(object):
 
         self.latest_response: requests.Response = None
         """Stores the latest response obtained by a request"""
+
+        self.is_name_active = False
+        """Whether the user name/cookie combination has been activated"""
 
 
     def get_stateful_hash_and_cookie(self):
@@ -42,5 +48,24 @@ class DataUploader(object):
         self.latest_response = requests.get(
             self.name_activation_url,
             params=params,
-            headers={'Cookie': f"PHPSESSID={self.cookie}"}
+            headers=self._get_cookie_headers()
         )
+        self.is_name_active = True
+
+
+    def get_payload_image(self, image_name='test.jpg'):
+        if not self.is_name_active:
+            self.activate_name()
+
+        self.latest_response = requests.get(
+            self.payload_image_url,
+            headers=self._get_cookie_headers()
+        )
+
+        im = Image.open(io.BytesIO(self.latest_response.content))
+        im.save(image_name)
+        im.close()
+
+
+    def _get_cookie_headers(self):
+        return {'Cookie': f"PHPSESSID={self.cookie}"}
