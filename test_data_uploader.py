@@ -1,38 +1,39 @@
 import imghdr
+import os
 import re
 
 import pytest
 
 from data_uploader import DataUploader
-from PIL import Image
-import os
+
 
 @pytest.mark.integration
-def test_get_state_information():
+def test_upload_data():
     uploader = DataUploader()
+
     uploader.get_stateful_hash_and_cookie()
 
-    assert re.match(r'\w{32}', uploader.stateful_hash)
-    assert re.match(r'\w{26}', uploader.cookie)
+    assert re.match(r'\w{32}', uploader.stateful_hash), "Wrong stateful hash format"
+    assert re.match(r'\w{26}', uploader.cookie), "Wrong Cookie format"
     assert uploader.latest_response.url == uploader.test_url
 
-
-@pytest.mark.integration
-def test_activate_name():
-    uploader = DataUploader()
     uploader.activate_name()
 
-    assert 'Download the payload. Sign it with your name' in uploader.latest_response.text
+    assert 'Download the payload. Sign it with your name' in uploader.latest_response.text, "Couldn't activate"
 
-@pytest.mark.integration
-def test_get_payload_image():
-    uploader = DataUploader()
+    im = uploader.get_payload_image()
+    im = uploader.watermark_image(im, 'some silly watermark')
 
     image_name = 'test_file_image.jpg'
-    uploader.get_payload_image(image_name)
-    im = Image.open(image_name)
+    im.save(image_name)
 
-    assert imghdr.what(image_name) == 'jpeg'
+    assert imghdr.what(image_name) == 'jpeg', "Couldn't save watermarked image"
 
     im.close()
     os.unlink(image_name)
+
+    uploader.upload_data()
+
+    headers = uploader.latest_response.headers
+
+    assert headers.get('x-nice-work') == 'Pro.', "Couldn't submit test correctly"
