@@ -4,12 +4,12 @@ import re
 
 import pytest
 
-from data_uploader import DataUploader
+from pyw_uploader import PywUploader
 
 
 @pytest.mark.integration
 def test_upload_data():
-    uploader = DataUploader()
+    uploader = PywUploader()
 
     uploader.get_stateful_hash_and_cookie()
 

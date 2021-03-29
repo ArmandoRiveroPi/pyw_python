@@ -12,7 +12,7 @@ from PIL import Image, ImageFont, ImageDraw
 from bs4 import BeautifulSoup
 
 
-class DataUploader(object):
+class PywUploader(object):
     # urls
     base_url = "https://www.proveyourworth.net"
     test_url = urljoin(base_url, 'level3/')
@@ -118,7 +118,7 @@ class DataUploader(object):
 
 
 if __name__ == "__main__":
-    uploader = DataUploader()
+    uploader = PywUploader()
 
     uploader.name = "Armando Rivero"
     uploader.email = "armando.rivero143@gmail.com"
