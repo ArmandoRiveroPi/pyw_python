@@ -1,6 +1,10 @@
+"""
+Instructions to use:
+
+
+"""
 import io
 import os
-import sys
 from urllib.parse import urljoin
 
 import requests
@@ -20,8 +24,10 @@ class DataUploader(object):
     def __init__(self):
         self.name = "Juan Garcia"
         self.email = "juan.garcia@gmail.com"
-        self.cv_file = "resume.pdf"
         self.about = """Write your about here"""
+
+        self.cv_file = "resume.pdf"
+        self.image_file = 'image.jpg'
 
         self.stateful_hash: str = ''
         self.cookie: str = ''
@@ -72,8 +78,7 @@ class DataUploader(object):
     def upload_data(self):
         im = self.get_payload_image()
         im = self.watermark_image(im, f"{self.name} {self.cookie}")
-        image_name = 'image.jpg'
-        im.save(image_name)
+        im.save(self.image_file)
 
         text_fields = {
             'email': self.email,
@@ -82,7 +87,7 @@ class DataUploader(object):
         }
         files = {
             'resume': (self.cv_file, open(self.cv_file, 'rb'), 'application/pdf'),
-            'image': (image_name, open(image_name, 'rb'), 'image/jpg'),
+            'image': (self.image_file, open(self.image_file, 'rb'), 'image/jpg'),
             'code': (os.path.basename(__file__), open(__file__, 'r'), 'text/plain'),
         }
 
@@ -110,3 +115,32 @@ class DataUploader(object):
         return {
             'Cookie': f"PHPSESSID={self.cookie}",
         }
+
+
+if __name__ == "__main__":
+    uploader = DataUploader()
+
+    uploader.name = "Armando Rivero"
+    uploader.email = "armando.rivero143@gmail.com"
+    uploader.about = """
+    Well, I have a hard time talking of myself. To be honest, I'm not sure if you should be hiring me.
+    I mean, I don't have much solid, full-time experience. What I do have, on the other hand,
+    it's a lot of love for programming and for code, an almost obsessive desire to create great code
+    that can act as the long term foundation for a successful organization. That, and a equal burning passion
+    for learning new programming stuff. I like to believe that, since I love learning so much, I'm kind of good at it.
+    
+    I have my weaknesses for sure. I'm a bit slow, since I prefer to do things carefully. I get bored if I
+    have to do the same thing over and over. My spirit falls if I have to multitask for too long. 
+    I prefer doing focused, high quality work instead. I'd love to correct the worst weaknesses
+    I can see and the others I'm surely missing and would be forever grateful for any guidance in that regard. 
+    
+    To summarize, if you want somebody that will grow with you, that you can ask to try new ideas and technologies, 
+    I could be your guy. If you want a generalist, that knows a bit about many things and will try to learn
+    about what your organization does out of pure curiosity, that could be me. If, instead,
+    you want somebody fast from day zero, that you could plug like a piece of machinery to perform the same
+    kind of work forever, I'd probably not recommend hiring myself.  
+    
+    Thanks for listening to the rant :) 
+    """
+
+    uploader.upload_data()
