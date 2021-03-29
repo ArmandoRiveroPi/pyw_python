@@ -4,7 +4,7 @@ Instructions to use:
 Use Python 3.8 if possible, I haven't tested it with other versions
 
 The Pillow library needs a font file to watermark images, so
-you'll need to set the FONT_FILE class field to point to
+you'll need to set the FONT_FILE class field as the path to
 a suitable font file.
 
 Create a virtual environment, activate it and install the requirements.
@@ -38,7 +38,7 @@ from PIL import Image, ImageFont, ImageDraw
 from bs4 import BeautifulSoup
 
 
-class PywUploader(object):
+class ProveYourWorthUploader(object):
     # urls
     BASE_URL = "https://www.proveyourworth.net"
     TEST_URL = urljoin(BASE_URL, 'level3/')
@@ -145,12 +145,13 @@ class PywUploader(object):
 
 
 if __name__ == "__main__":
-    uploader = PywUploader()
+    uploader = ProveYourWorthUploader()
 
     uploader.name = "Armando Rivero"
     uploader.email = "armando.rivero143@gmail.com"
     uploader.about = """
-    Well, I have a hard time talking of myself. To be honest, I'm not sure if you should be hiring me.
+    To be honest, I'm not sure if you should be hiring me.
+    
     I mean, I don't have much solid, full-time experience. What I do have, on the other hand,
     it's a lot of love for programming and for code, an almost obsessive desire to create great code
     that can act as the long term foundation for a successful organization. That, and a equal burning passion
@@ -163,8 +164,8 @@ if __name__ == "__main__":
     
     To summarize, if you want somebody that will grow with you, that you can ask to try new ideas and technologies, 
     I could be your guy. If you want a generalist, that knows a bit about many things and will try to learn
-    about what your organization does out of pure curiosity, that could be me. If, instead,
-    you want somebody fast from day zero, that you could plug like a piece of machinery to perform the same
+    about your organization out of pure curiosity, that could be me. If, instead,
+    you want somebody fast from day zero, that you could plug in to perform the same
     kind of work forever, I'd probably not recommend hiring myself.  
     
     Thanks for listening to the rant :) 
