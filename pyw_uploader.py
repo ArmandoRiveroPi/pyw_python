@@ -1,8 +1,34 @@
 """
 Instructions to use:
 
+Use Python 3.8 if possible, I haven't tested it with other versions
 
+The Pillow library needs a font file to watermark images, so
+you'll need to set the FONT_FILE class field to point to
+a suitable font file.
+
+Create a virtual environment, activate it and install the requirements.
+
+attrs==20.3.0
+beautifulsoup4==4.9.3
+certifi==2020.12.5
+chardet==4.0.0
+idna==2.10
+iniconfig==1.1.1
+packaging==20.9
+Pillow==8.1.2
+pluggy==0.13.1
+py==1.10.0
+pyparsing==2.4.7
+requests==2.25.1
+soupsieve==2.2
+toml==0.10.2
+urllib3==1.26.3
+
+Then run with the environment activated
+python pyw_uploader.py
 """
+
 import io
 import os
 from urllib.parse import urljoin
@@ -14,11 +40,13 @@ from bs4 import BeautifulSoup
 
 class PywUploader(object):
     # urls
-    base_url = "https://www.proveyourworth.net"
-    test_url = urljoin(base_url, 'level3/')
-    name_activation_url = urljoin(test_url, 'activate/')
-    payload_image_url = urljoin(test_url, 'payload/')
-    upload_url = urljoin(test_url, 'reaper/')
+    BASE_URL = "https://www.proveyourworth.net"
+    TEST_URL = urljoin(BASE_URL, 'level3/')
+    NAME_ACTIVATION_URL = urljoin(TEST_URL, 'activate/')
+    PAYLOAD_IMAGE_URL = urljoin(TEST_URL, 'payload/')
+    UPLOAD_URL = urljoin(TEST_URL, 'reaper/')
+
+    FONT_FILE = 'Cousine-Bold.ttf'
 
 
     def __init__(self):
@@ -40,7 +68,7 @@ class PywUploader(object):
 
 
     def get_stateful_hash_and_cookie(self):
-        self.latest_response = requests.get(self.test_url)
+        self.latest_response = requests.get(self.TEST_URL)
 
         self.cookie = self.latest_response.cookies.get('PHPSESSID')
         soup = BeautifulSoup(self.latest_response.text, features="html.parser")
@@ -56,7 +84,7 @@ class PywUploader(object):
         params = {'username': self.name, 'statefulhash': self.stateful_hash}
 
         self.latest_response = requests.get(
-            self.name_activation_url,
+            self.NAME_ACTIVATION_URL,
             params=params,
             headers=self._get_headers()
         )
@@ -68,7 +96,7 @@ class PywUploader(object):
             self.activate_name()
 
         self.latest_response = requests.get(
-            self.payload_image_url,
+            self.PAYLOAD_IMAGE_URL,
             headers=self._get_headers()
         )
 
@@ -96,13 +124,12 @@ class PywUploader(object):
         headers['User-Agent'] = f"X-{formatted_name}"
 
         self.latest_response = requests.post(
-            self.upload_url, headers=headers, data=text_fields, files=files
+            self.UPLOAD_URL, headers=headers, data=text_fields, files=files
         )
 
 
-    @staticmethod
-    def watermark_image(image: Image, text='watermark'):
-        font = ImageFont.truetype('Cousine-Bold.ttf', 24)
+    def watermark_image(self, image: Image, text='watermark'):
+        font = ImageFont.truetype(self.FONT_FILE, 24)
         draw = ImageDraw.Draw(image)
 
         margin = 10

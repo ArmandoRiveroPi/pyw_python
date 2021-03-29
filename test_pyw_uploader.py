@@ -15,7 +15,7 @@ def test_upload_data():
 
     assert re.match(r'\w{32}', uploader.stateful_hash), "Wrong stateful hash format"
     assert re.match(r'\w{26}', uploader.cookie), "Wrong Cookie format"
-    assert uploader.latest_response.url == uploader.test_url
+    assert uploader.latest_response.url == uploader.TEST_URL
 
     uploader.activate_name()
 
